@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="55ANTISYSTEM - painel estudantil">
+    <title>55ANTISYSTEM</title>
+    <link rel="stylesheet" href="style.css">
+
+<style>
+.extension-extra{margin-top:14px;display:grid;gap:14px}
+.extra-panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:22px}
+.extra-panel h3{margin:6px 0 8px;font-size:26px;letter-spacing:-.7px}
+.extra-panel p{color:var(--muted);line-height:1.6}
+.device-tabs,.browser-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.device-button,.browser-button{padding:10px 14px;border:1px solid #252529;border-radius:9px;background:#0b0b0d;color:#77777f;cursor:pointer}
+.device-button.active,.browser-button.active{border-color:#e4e4e6;background:#ececed;color:#090909}
+.tutorial-box{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#09090b}
+.tutorial-box ol{margin:10px 0 0;padding-left:20px;color:var(--muted);line-height:1.75}
+.tutorial-box strong{color:var(--text)}
+.contact-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.pix-box{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#09090b}
+.pix-key{font-weight:700;word-break:break-all}
+.small-note{font-size:12px;color:var(--muted-2)!important}
+</style>
+</head>
+<body>
+    <div id="loginScreen" class="screen login-screen">
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+
+        <section class="login-card">
+            <div class="brand-mark">55</div>
+            <p class="eyebrow">55ANTISYSTEM</p>
+            <h1>Organize o que está pendente.</h1>
+            <p class="login-subtitle">Entre com seus dados para sincronizar suas atividades e acompanhar prazos em um único painel.</p>
+
+            <form id="loginForm" novalidate>
+                <div class="field-row">
+                    <div class="field field-large">
+                        <label for="ra">RA</label>
+                        <input id="ra" name="ra" type="text" inputmode="numeric" autocomplete="username" placeholder="Digite seu RA">
+                    </div>
+                    <div class="field field-small">
+                        <label for="digit">Dígito</label>
+                        <input id="digit" name="digit" type="text" inputmode="numeric" maxlength="2" placeholder="00">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="uf">UF</label>
+                    <select id="uf" name="uf">
+                        <option value="SP">SP</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="password">Senha SED</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha">
+                </div>
+
+                <button class="primary-button" type="submit">
+                    <span>Entrar e sincronizar</span>
+                    <span class="button-arrow">→</span>
+                </button>
+            </form>
+
+            <div id="loginStatus" class="form-status" aria-live="polite"></div>
+            <p class="security-note">As credenciais são usadas apenas durante a autenticação e não ficam expostas no navegador.</p>
+        </section>
+    </div>
+
+    <div id="app" class="app hidden">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-mark small">55</div>
+                <div>
+                    <strong>55ANTISYSTEM</strong>
+                    <span>STUDENT CONTROL</span>
+                </div>
+            </div>
+
+            <nav class="navigation" aria-label="Navegação principal">
+                <button class="nav-button active" type="button" data-page="home">Início</button>
+                <button class="nav-button" type="button" data-page="activities">Atividades</button>
+                <button class="nav-button" type="button" data-page="request">Solicitação</button>
+                <button class="nav-button" type="button" data-page="history">Histórico</button>
+                <button class="nav-button" type="button" data-page="payments">Pagamentos</button>
+                <button class="nav-button" type="button" data-page="extension">Extensão</button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a class="discord-button" href="https://discord.gg/FFE5UQFBWu" target="_blank" rel="noopener noreferrer">Discord 55</a>
+                <button id="logoutButton" class="logout-button" type="button">Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">PAINEL</p>
+                    <h2 id="pageTitle">Início</h2>
+                </div>
+
+                <div class="user-area">
+                    <div class="sync-status">
+                        <span class="sync-dot"></span>
+                        <span id="syncText">Aguardando sincronização</span>
+                    </div>
+                    <div class="user-chip">
+                        <div id="avatar" class="avatar">55</div>
+                        <div>
+                            <strong id="studentName">Aluno</strong>
+                            <span id="studentRA">RA não informado</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section id="home" class="page active">
+                <div class="hero-panel">
+                    <div>
+                        <p class="eyebrow">55 / STUDENT CONTROL</p>
+                        <h1>O prazo não espera.</h1>
+                        <p>Você tem a atividade. Nós temos o tempo. Acompanhe suas pendências sem sair do painel.</p>
+                    </div>
+                    <div class="hero-action">
+                        <button id="syncButton" class="secondary-button" type="button">Sincronizar agora</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span>Atividades pendentes</span>
+                        <strong id="pending">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Atividades expiradas</span>
+                        <strong id="expired">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Total encontrado</span>
+                        <strong id="total">0</strong>
+                    </article>
+                    <article class="stat-card highlight">
+                        <span>Valor calculado</span>
+                        <strong id="price">R$ 0,00</strong>
+                    </article>
+                </div>
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">VISÃO RÁPIDA</p>
+                        <h3>Atividades recentes</h3>
+                    </div>
+                    <button class="text-button" type="button" data-go="activities">Ver todas →</button>
+                </div>
+
+                <div id="recentActivities" class="activity-grid"></div>
+            </section>
+
+            <section id="activities" class="page">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">SINCRONIZADO</p>
+                        <h3>Todas as atividades</h3>
+                    </div>
+                    <div class="filters">
+                        <button class="filter-button active" type="button" data-filter="all">Todas</button>
+                        <button class="filter-button" type="button" data-filter="pending">Pendentes</button>
+                        <button class="filter-button" type="button" data-filter="expired">Expiradas</button>
+                    </div>
+                </div>
+                <div id="activitiesList" class="activity-list"></div>
+            </section>
+
+            <section id="request" class="page">
+                <div class="request-layout">
+                    <div class="request-card main-request-card">
+                        <p class="eyebrow">SOLICITAÇÃO</p>
+                        <h3>Deixe a parte difícil com a 55.</h3>
+                        <p>Selecione as atividades no painel e confira o cálculo antes de enviar sua solicitação.</p>
+                        <div class="request-total">
+                            <span>Total selecionado</span>
+                            <strong id="selectedCount">0 atividades</strong>
+                        </div>
+                        <div class="request-total">
+                            <span>Valor</span>
+                            <strong id="selectedPrice">R$ 0,00</strong>
+                        </div>
+                        <button id="requestButton" class="primary-button" type="button">Continuar solicitação</button>
+                        <p class="request-disclaimer">O painel não automatiza provas ou avaliações sigilosas.</p>
+                    </div>
+
+                    <div class="request-card side-request-card">
+                        <span class="mini-label">PREÇO</span>
+                        <strong>R$ 0,15</strong>
+                        <p>por atividade selecionada.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="history" class="page">
+                <div class="empty-state">
+                    <div class="empty-icon">55</div>
+                    <p class="eyebrow">HISTÓRICO</p>
+                    <h3>Nenhuma solicitação ainda</h3>
+                    <p>Quando houver solicitações registradas, elas aparecerão aqui.</p>
+                </div>
+            </section>
+                        <section id="payments" class="page">
+                <div class="payment-grid">
+                    <div class="payment-card">
+                        <p class="eyebrow">PAGAMENTOS</p>
+                        <h3>Resumo financeiro</h3>
+                        <div class="payment-line">
+                            <span>Saldo em aberto</span>
+                            <strong>R$ 0,00</strong>
+                        </div>
+                        <div class="payment-line">
+                            <span>Último pagamento</span>
+                            <strong>—</strong>
+                        </div>
+                    </div>
+                    <div class="payment-card muted-card">
+                        <span class="mini-label">STATUS</span>
+                        <strong>Pronto</strong>
+                        <p>Nenhuma cobrança pendente foi registrada.</p>
+                    </div>
+                    <div class="payment-card" style="grid-column:1/-1">
+                        <p class="eyebrow">PAGAMENTO</p>
+                        <h3>Como funciona?</h3>
+                        <p>Veja o valor mostrado no site, faça o Pix desse valor, tire um print do site mostrando a quantia e envie o comprovante + seu RA pelo WhatsApp. Depois, aguarde o atendimento.</p>
+                        <p class="small-note">Por segurança, não envie sua senha do Sala do Futuro pelo WhatsApp.</p>
+                        <div class="pix-box">
+                            <span class="mini-label">CHAVE PIX</span>
+                            <span class="pix-key" id="pixKey">Aguardando autenticação do Live Pix</span>
+                            <button class="secondary-button" id="copyPixButton" type="button">Copiar chave</button>
+                        </div>
+                        <div class="contact-actions">
+                            <a class="primary-button" href="https://wa.me/5511930438136" target="_blank" rel="noopener noreferrer">Enviar comprovante pelo WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="extension" class="page">
+                <div class="extension-extra">
+                    <div class="extra-panel">
+                        <p class="eyebrow">EXTENSÃO</p>
+                        <h3>Instale a extensão 55</h3>
+                        <p>Escolha seu dispositivo e navegador para ver o tutorial correspondente.</p>
+                        <a class="primary-button" href="luxury55-extensao-1.8.0.zip" download>Baixar extensão</a>
+
+                        <div class="device-tabs">
+                            <button class="device-button active" type="button" data-device="pc">💻 PC</button>
+                            <button class="device-button" type="button" data-device="android">📱 Android</button>
+                            <button class="device-button" type="button" data-device="ios">🍎 iOS</button>
+                        </div>
+
+                        <div id="pcTutorial" class="tutorial-box">
+                            <strong>PC — escolha o navegador</strong>
+                            <div class="browser-tabs">
+                                <button class="browser-button active" type="button" data-browser="chrome">Chrome</button>
+                                <button class="browser-button" type="button" data-browser="edge">Edge</button>
+                                <button class="browser-button" type="button" data-browser="firefox">Firefox</button>
+                                <button class="browser-button" type="button" data-browser="opera">Opera</button>
+                            </div>
+                            <div id="browserTutorial" class="tutorial-box">
+                                <strong>Chrome</strong>
+                                <ol>
+                                    <li>Baixe a extensão pelo botão acima.</li>
+                                    <li>Extraia o arquivo ZIP.</li>
+                                    <li>Abra <strong>chrome://extensions</strong>.</li>
+                                    <li>Ative <strong>Modo do desenvolvedor</strong>.</li>
+                                    <li>Clique em <strong>Carregar sem compactação</strong>.</li>
+                                    <li>Selecione a pasta extraída.</li>
+                                    <li>Recarregue o Sala do Futuro e o Luxury.</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div id="androidTutorial" class="tutorial-box" hidden>
+                            <strong>Android</strong>
+                            <ol>
+                                <li>Use um navegador Android que ofereça suporte a extensões de desktop.</li>
+                                <li>Abra a página da extensão no navegador compatível.</li>
+                                <li>Instale a extensão seguindo o gerenciador de extensões do navegador.</li>
+                                <li>Abra o Sala do Futuro e o Luxury no mesmo navegador.</li>
+                            </ol>
+                            <p class="small-note">O suporte a extensões varia conforme o navegador e a versão do Android.</p>
+                        </div>
+
+                        <div id="iosTutorial" class="tutorial-box" hidden>
+                            <strong>iOS</strong>
+                            <ol>
+                                <li>Use um navegador iOS que ofereça suporte a extensões.</li>
+                                <li>Instale a extensão pelo sistema de extensões disponível no navegador.</li>
+                                <li>Ative a extensão para o site do Sala do Futuro.</li>
+                                <li>Abra o Sala do Futuro e depois o Luxury.</li>
+                            </ol>
+                            <p class="small-note">No iPhone/iPad, o suporte e a instalação dependem do navegador e da versão do iOS.</p>
+                        </div>
+                    </div>
+
+                    <div class="extra-panel">
+                        <p class="eyebrow">ATENDIMENTO</p>
+                        <h3>Precisa de ajuda?</h3>
+                        <p>Entre em contato pelo WhatsApp para receber atendimento sobre sua solicitação.</p>
+                        <div class="contact-actions">
+                            <a class="secondary-button" href="https://wa.me/5511930438136" target="_blank" rel="noopener noreferrer">WhatsApp · 11 93043-8136</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
